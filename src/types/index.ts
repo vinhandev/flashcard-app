@@ -1,6 +1,7 @@
 export type CardProps = {
+  id: string;
   title: string;
-  repeatLevel: 0 | 1;
+  repeatLevel: number;
   type: 'word' | 'image';
   description?: string;
   image?: string;

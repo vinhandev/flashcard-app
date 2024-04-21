@@ -10,8 +10,8 @@ type Props = {
 type Methods = {
   setCards: (cards: CardProps[]) => void;
   addCard: (card: CardProps) => void;
-  updateCard: (index: number, card: CardProps) => void;
-  deleteCard: (index: number) => void;
+  updateCard: (id: string, card: CardProps) => void;
+  deleteCard: (id: string) => void;
 };
 
 const initProps: Props = {
@@ -24,16 +24,17 @@ const useZutand = create(
       ...initProps,
       setCards: (cards) => set(() => ({ cards })),
       addCard: (card) => set((state) => ({ cards: [...state.cards, card] })),
-      updateCard: (index = 0, card) =>
+      updateCard: (id, paramCard) =>
         set((state) => {
-          const newCards = [...state.cards];
-          newCards[index] = card;
+          const newCards = state.cards.map((card) => {
+            if (card.id === id) return paramCard;
+            return card;
+          });
           return { cards: newCards };
         }),
-      deleteCard: (index) =>
+      deleteCard: (id) =>
         set((state) => {
-          const newCards = [...state.cards];
-          newCards.splice(index, 1);
+          const newCards = state.cards.filter((card) => card.id !== id);
           return { cards: newCards };
         }),
     }),

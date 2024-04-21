@@ -71,8 +71,10 @@ export const Button = ({
   return (
     <TouchableOpacity
       style={{
-        padding: 10,
-        backgroundColor: 'blue',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        backgroundColor: props.disabled ? '#ccc' : '#124076',
+        opacity: props.disabled ? 0.6 : 1,
 
         borderRadius: 5,
       }}
@@ -81,8 +83,9 @@ export const Button = ({
     >
       <Text
         style={{
-          color: 'white',
-          fontSize: 30,
+          textAlign:'center',
+          color: props.disabled ? '#000' : 'white',
+          fontSize: 20,
         }}
       >
         {children}
@@ -93,6 +96,12 @@ export const Button = ({
 
 export const CustomInput = ({ style, ...props }: TextInputProps) => {
   return (
-    <TextInput style={[{ padding: 10, borderWidth: 1 }, style]} {...props} />
+    <TextInput
+      style={[
+        { padding: 10, borderWidth: 1, justifyContent: 'flex-start' },
+        style,
+      ]}
+      {...props}
+    />
   );
 };
