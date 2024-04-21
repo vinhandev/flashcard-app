@@ -6,16 +6,19 @@ import { zustandStorage } from './storage';
 
 type Props = {
   cards: CardProps[];
+  loading: boolean;
 };
 type Methods = {
   setCards: (cards: CardProps[]) => void;
   addCard: (card: CardProps) => void;
   updateCard: (id: string, card: CardProps) => void;
   deleteCard: (id: string) => void;
+  setLoading: (loading: boolean) => void;
 };
 
 const initProps: Props = {
   cards: [],
+  loading: false,
 };
 
 const useZutand = create(
@@ -37,6 +40,7 @@ const useZutand = create(
           const newCards = state.cards.filter((card) => card.id !== id);
           return { cards: newCards };
         }),
+      setLoading: (loading) => set(() => ({ loading })),
     }),
     {
       name: 'user-storage',

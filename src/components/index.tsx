@@ -42,8 +42,6 @@ export const Flex = ({
   return (
     <View
       style={[
-        isTesting && { borderWidth: 1, backgroundColor: 'red' },
-        style,
         {
           flex,
           flexDirection: direction,
@@ -54,6 +52,8 @@ export const Flex = ({
           height,
           gap,
         },
+        style,
+        isTesting && { borderWidth: 1, backgroundColor: 'red' },
       ]}
       {...props}
     />
@@ -83,7 +83,7 @@ export const Button = ({
     >
       <Text
         style={{
-          textAlign:'center',
+          textAlign: 'center',
           color: props.disabled ? '#000' : 'white',
           fontSize: 20,
         }}
@@ -98,7 +98,19 @@ export const CustomInput = ({ style, ...props }: TextInputProps) => {
   return (
     <TextInput
       style={[
-        { padding: 10, borderWidth: 1, justifyContent: 'flex-start' },
+        {
+          padding: 20,
+          borderRadius: 10,
+          justifyContent: 'flex-start',
+          backgroundColor: '#fff',
+          borderWidth:1,
+          borderColor:'#ccc',
+
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.4,
+          shadowRadius: 2,
+        },
         style,
       ]}
       {...props}

@@ -12,6 +12,8 @@ import { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import useFireStore from '../hooks/useFireStore';
 import { CardProps } from '../types';
+import { showError } from '../utils';
+import useLoading from '../hooks/useLoading';
 
 const maxHeight = Dimensions.get('window').height - 300;
 export default function HomeScreen() {
@@ -29,14 +31,23 @@ export default function HomeScreen() {
   const selectedCard = isCardEmpty ? null : filteredCard[selectedIndex];
   const { title, type, description, image } = selectedCard ?? {};
   const { readAll, write } = useFireStore<CardProps>('cards');
-
+  const { setLoading } = useLoading();
   useEffect(() => {
     async function init() {
-      const response = await readAll();
+      setLoading(true);
+      try {
+        const response = await readAll();
 
-      const data = response.docs.map((doc) => doc.data()) as CardProps[];
-      if (!data) return;
-      setCards(data);
+        const data = response.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        })) as CardProps[];
+        if (!data) return;
+        setCards(data);
+      } catch (error) {
+        showError(error);
+      }
+      setLoading(false);
     }
 
     init();
@@ -58,9 +69,11 @@ export default function HomeScreen() {
       repeatLevel: 1,
     };
     try {
+      setLoading(true);
       await write(id, updatedCard);
+      setLoading(false);
     } catch (error) {
-      console.error('No Internet');
+      showError(error);
     }
     updateCard(id, updatedCard);
     onNext();
@@ -78,7 +91,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#eee' }}>
       <Flex
         flex={1}
         justify="space-evenly"
@@ -91,7 +104,21 @@ export default function HomeScreen() {
           <Button onPress={onAdd}>Add Card</Button>
           <Button onPress={onNavigateList}>Card List</Button>
         </Flex>
-        <Flex flex={1} gap={10}>
+        <Flex
+          flex={1}
+          gap={10}
+          style={{
+            borderRadius: 10,
+            backgroundColor: '#fff',
+            marginHorizontal: 25,
+            padding: 20,
+
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.4,
+            shadowRadius: 2,
+          }}
+        >
           <Flex align="center">
             <Text
               style={{
@@ -105,7 +132,7 @@ export default function HomeScreen() {
             </Text>
           </Flex>
           {!isCardEmpty ? (
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
               <Flex padding={20} justify="center" flex={1}>
                 {!isOpen ? (
                   <Flex
@@ -148,7 +175,11 @@ export default function HomeScreen() {
                       <Flex flex={1}>
                         <Image
                           source={{ uri: image }}
-                          style={{ width: '100%', height: '100%' }}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            resizeMode: 'contain',
+                          }}
                         />
                       </Flex>
                     )}

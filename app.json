@@ -2,6 +2,7 @@
   "expo": {
     "name": "flashcard-app",
     "slug": "flashcard-app",
+    "scheme": "flashcardapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -30,6 +31,14 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "9695e60d-e1cb-486e-9191-0986039008aa"
+      }
+    }
   }
 }

@@ -3,20 +3,25 @@ import { Button, Flex } from '../components';
 import useZutand from '../store';
 import { router } from 'expo-router';
 import useFireStore from '../hooks/useFireStore';
+import { showError } from '../utils';
+import useLoading from '../hooks/useLoading';
 
 export default function ListScreen() {
   const cards = useZutand((state) => state.cards);
   const deleteCard = useZutand((state) => state.deleteCard);
   const { remove } = useFireStore('cards');
+  const { setLoading } = useLoading();
 
   const onUpdate = (id: string) => {
     router.push(`/update?id=${id}`);
   };
   const onDelete = async (id: string) => {
     try {
+      setLoading(true);
       await remove(id);
+      setLoading(false);
     } catch (error) {
-      console.error('No Internet');
+      showError(error);
     }
     deleteCard(id);
   };
@@ -40,7 +45,13 @@ export default function ListScreen() {
       </Flex>
       <FlatList
         data={cards}
+        keyExtractor={(item, index) => `${index}`}
         ItemSeparatorComponent={() => <Flex height={10} />}
+        ListEmptyComponent={() => (
+          <Flex justify="center" align="center" flex={1}>
+            <Text>No data</Text>
+          </Flex>
+        )}
         renderItem={({ item }) => (
           <Flex
             padding={20}
@@ -48,14 +59,22 @@ export default function ListScreen() {
               backgroundColor: '#ddd',
             }}
             direction="row"
-            align="center"
             gap={10}
           >
-            <Flex flex={1}>
-              <Text>{item.title}</Text>
+            <Flex flex={1} justify="flex-start" >
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                }}
+              >
+                {item.title}
+              </Text>
             </Flex>
-            <Button onPress={() => onUpdate(item.id)}>Update</Button>
-            <Button onPress={() => onDelete(item.id)}>Delete</Button>
+            <Flex gap={10}>
+              <Button onPress={() => onUpdate(item.id)}>Update</Button>
+              <Button onPress={() => onDelete(item.id)}>Delete</Button>
+            </Flex>
           </Flex>
         )}
       />

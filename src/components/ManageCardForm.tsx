@@ -5,8 +5,10 @@ import useImageCropPicker from '../hooks/useImageCropPicker';
 import { OptionProps } from '../types/react-native-crop-image-picker';
 import useZutand from '../store';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Image, Text } from 'react-native';
+import { Alert, Image, Keyboard, Text } from 'react-native';
 import useFireStore from '../hooks/useFireStore';
+import { showError } from '../utils';
+import useLoading from '../hooks/useLoading';
 type Props = {
   state: CardProps;
   setState: (card: CardProps) => void;
@@ -23,6 +25,7 @@ export const ManageCardForm = ({ state, setState, mode }: Props) => {
   const { openCamera, openLibrary } = useImageCropPicker();
   const add = useZutand((state) => state.addCard);
   const update = useZutand((state) => state.updateCard);
+  const { setLoading } = useLoading();
 
   const { write, add: addFireStore } = useFireStore('cards');
 
@@ -53,7 +56,8 @@ export const ManageCardForm = ({ state, setState, mode }: Props) => {
   };
 
   const onSubmit = async () => {
-    console.log(state);
+    Keyboard.dismiss();
+
     if (
       (state.description === '' && state.type === 'word') ||
       (state.image === '' && state.type === 'image') ||
@@ -61,20 +65,28 @@ export const ManageCardForm = ({ state, setState, mode }: Props) => {
     )
       return;
     if (mode === 'add') {
+      setLoading(true);
+      let id = '';
       try {
-        await addFireStore(state);
+        const response = await addFireStore(state);
+        console.log('response', response);
+        id = response.id;
       } catch (error) {
-        console.error('No Internet');
+        showError(error);
       }
-      add(state);
+      setLoading(false);
+
+      add({ ...state, id });
     }
 
     if (mode === 'edit' && id) {
       const updateId = typeof id === 'object' ? id[0] : id;
       try {
+        setLoading(true);
         await write(updateId, state);
+        setLoading(false);
       } catch (error) {
-        console.error('No Internet');
+        showError(error);
       }
       update(updateId, state);
     }
@@ -86,7 +98,7 @@ export const ManageCardForm = ({ state, setState, mode }: Props) => {
   }
 
   return (
-    <Flex padding={20} flex={1} justify="space-evenly">
+    <Flex padding={30} flex={1} justify="space-evenly">
       <Flex align="center">
         <Text
           style={{
@@ -99,7 +111,13 @@ export const ManageCardForm = ({ state, setState, mode }: Props) => {
         </Text>
       </Flex>
 
-      <Flex flex={1} gap={20} padding={20}>
+      <Flex
+        flex={1}
+        gap={20}
+        style={{
+          paddingVertical: 20,
+        }}
+      >
         <Flex>
           <CustomInput
             value={state.title}
