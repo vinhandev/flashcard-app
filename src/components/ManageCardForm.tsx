@@ -9,6 +9,7 @@ import { Alert, Image, Keyboard, Text } from 'react-native';
 import useFireStore from '../hooks/useFireStore';
 import { showError } from '../utils';
 import useLoading from '../hooks/useLoading';
+import { useSupabase } from '../hooks/useSupabase';
 type Props = {
   state: CardProps;
   setState: (card: CardProps) => void;
@@ -27,7 +28,7 @@ export const ManageCardForm = ({ state, setState, mode }: Props) => {
   const update = useZutand((state) => state.updateCard);
   const { setLoading } = useLoading();
 
-  const { write, add: addFireStore } = useFireStore('cards');
+  const { update: write, add: addFireStore } = useSupabase();
 
   const onChangeType = (type: 'word' | 'image') => {
     setState({ ...state, type });
@@ -64,13 +65,18 @@ export const ManageCardForm = ({ state, setState, mode }: Props) => {
       state.title === ''
     )
       return;
+    let id = '';
     if (mode === 'add') {
       setLoading(true);
-      let id = '';
       try {
-        const response = await addFireStore(state);
+        const response = await addFireStore({
+          ...state,
+          description: state.description ?? '',
+          image: state.image ?? '',
+        });
         console.log('response', response);
-        id = response.id;
+
+        id = response === null ? '' : response.id;
       } catch (error) {
         showError(error);
       }
@@ -83,7 +89,11 @@ export const ManageCardForm = ({ state, setState, mode }: Props) => {
       const updateId = typeof id === 'object' ? id[0] : id;
       try {
         setLoading(true);
-        await write(updateId, state);
+        await write(updateId, {
+          ...state,
+          description: state.description ?? '',
+          image: state.image ?? '',
+        });
         setLoading(false);
       } catch (error) {
         showError(error);

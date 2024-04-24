@@ -5,11 +5,12 @@ import { router } from 'expo-router';
 import useFireStore from '../hooks/useFireStore';
 import { showError } from '../utils';
 import useLoading from '../hooks/useLoading';
+import { useSupabase } from '../hooks/useSupabase';
 
 export default function ListScreen() {
   const cards = useZutand((state) => state.cards);
   const deleteCard = useZutand((state) => state.deleteCard);
-  const { remove } = useFireStore('cards');
+  const { remove } = useSupabase();
   const { setLoading } = useLoading();
 
   const onUpdate = (id: string) => {

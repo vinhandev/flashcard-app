@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-native-firebase/app": "^19.2.2",
     "@react-native-firebase/firestore": "^19.2.2",
+    "@supabase/supabase-js": "^2.42.5",
     "expo": "~50.0.14",
     "expo-constants": "~15.4.6",
     "expo-linking": "~6.2.2",
