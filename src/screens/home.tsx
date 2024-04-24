@@ -31,7 +31,8 @@ export default function HomeScreen() {
   const isCardEmpty = cards.length === 0;
 
   const selectedCard = isCardEmpty ? null : filteredCard[selectedIndex];
-  const { title, type, description, image } = selectedCard ?? {};
+  const { title, type, description, image, repeatLevel, id } =
+    selectedCard ?? {};
   const { getAll, update } = useSupabase();
   const { setLoading } = useLoading();
   useEffect(() => {
@@ -138,16 +139,37 @@ export default function HomeScreen() {
               shadowRadius: 2,
             }}
           >
-            <Flex align="center">
+            <Flex align="center" direction="row" justify="space-between">
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 14,
+                  color: '#555',
+                }}
+              >
+                #{id}
+              </Text>
               <Text
                 style={{
                   textAlign: 'center',
                   fontSize: 20,
                   fontWeight: 'bold',
                   color: '#555',
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
                 }}
               >
                 {!isOpen ? 'Title' : 'Description'}
+              </Text>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 14,
+                  color: '#555',
+                }}
+              >
+                {repeatLevel !== undefined ? repeatLevel + 1 : ''}
               </Text>
             </Flex>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -205,7 +227,6 @@ export default function HomeScreen() {
                 )}
               </Flex>
             </ScrollView>
-            )
           </Flex>
         ) : (
           <Flex flex={1} justify="center" align="center">
