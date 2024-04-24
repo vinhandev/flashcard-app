@@ -61,21 +61,37 @@ export default function HomeScreen() {
     }
   }
 
+  function isCardCanReset() {
+    return cards.every((card) => card.repeatLevel === 5);
+  }
+
   async function onKnow() {
-    if (isCardEmpty || selectedCard === null) return;
-    const id = selectedCard.id;
-    const updatedCard = {
-      ...selectedCard,
-      repeatLevel: 1,
-    };
-    try {
-      setLoading(true);
-      await write(id, updatedCard);
-      setLoading(false);
-    } catch (error) {
-      showError(error);
+    if (isCardCanReset()) {
+      setCards(
+        cards.map((card) => {
+          return {
+            ...card,
+            repeatLevel: 0,
+          };
+        })
+      );
+    } else {
+      if (isCardEmpty || selectedCard === null) return;
+      const id = selectedCard.id;
+      const updatedCard = {
+        ...selectedCard,
+        repeatLevel: selectedCard.repeatLevel + 1,
+      };
+      try {
+        setLoading(true);
+        await write(id, updatedCard);
+        setLoading(false);
+      } catch (error) {
+        showError(error);
+      }
+      updateCard(id, updatedCard);
     }
-    updateCard(id, updatedCard);
+
     onNext();
   }
 
