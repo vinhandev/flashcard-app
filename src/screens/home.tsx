@@ -15,9 +15,8 @@ import { CardProps } from '../types';
 import { showError } from '../utils';
 import useLoading from '../hooks/useLoading';
 import { useSupabase } from '../hooks/useSupabase';
+import FlashCard from '../components/FlashCard';
 
-const maxHeight = Dimensions.get('window').height - 300;
-const colors = ['#BED7DC', '#FFB996', '#F6F7C4', '#756AB6', '#F3EEEA'];
 export default function HomeScreen() {
   const cards = useZutand((state) => state.cards);
   const setCards = useZutand((state) => state.setCards);
@@ -124,110 +123,16 @@ export default function HomeScreen() {
           <Button onPress={onNavigateList}>Card List</Button>
         </Flex>
         {!isCardEmpty ? (
-          <Flex
-            flex={1}
-            gap={10}
-            style={{
-              borderRadius: 10,
-              backgroundColor: colors[selectedCard?.repeatLevel ?? 0],
-              marginHorizontal: 25,
-              padding: 20,
-
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.4,
-              shadowRadius: 2,
-            }}
-          >
-            <Flex align="center" direction="row" justify="space-between">
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: 14,
-                  color: '#555',
-                }}
-              >
-                #{id}
-              </Text>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: 20,
-                  fontWeight: 'bold',
-                  color: '#555',
-                  position: 'absolute',
-                  left: 0,
-                  right: 0,
-                }}
-              >
-                {!isOpen ? 'Title' : 'Description'}
-              </Text>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: 14,
-                  color: '#555',
-                }}
-              >
-                {repeatLevel !== undefined ? repeatLevel + 1 : ''}
-              </Text>
-            </Flex>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <Flex padding={20} justify="center" flex={1}>
-                {!isOpen ? (
-                  <Flex
-                    flex={1}
-                    justify="center"
-                    align="center"
-                    style={{
-                      minHeight: maxHeight,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 30,
-                        textAlign: 'center',
-                        fontWeight: 'bold',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {title}
-                    </Text>
-                  </Flex>
-                ) : (
-                  <Flex
-                    flex={1}
-                    justify="center"
-                    style={{
-                      minHeight: maxHeight,
-                    }}
-                  >
-                    {type === 'word' && (
-                      <Text
-                        style={{
-                          textAlign: 'center',
-                        }}
-                      >
-                        {description}
-                      </Text>
-                    )}
-                    {type === 'image' && (
-                      <Flex flex={1}>
-                        <Image
-                          source={{ uri: image }}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            resizeMode: 'contain',
-                          }}
-                        />
-                      </Flex>
-                    )}
-                  </Flex>
-                )}
-              </Flex>
-            </ScrollView>
-          </Flex>
+          <FlashCard
+            description={description ?? ''}
+            image={image ?? ''}
+            isOpen={isOpen}
+            id={id ?? ''}
+            repeatLevel={repeatLevel ?? 0}
+            selectedCard={selectedCard}
+            title={title ?? ''}
+            type={type ?? 'image'}
+          />
         ) : (
           <Flex flex={1} justify="center" align="center">
             <Text>No Card</Text>

@@ -2188,6 +2188,11 @@ PODS:
     - React-Core
     - React-RCTImage
     - TOCropViewController
+  - RNReanimated (3.9.0):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
+    - React-Core
+    - ReactCommon/turbomodule/core
   - RNScreens (3.29.0):
     - glog
     - RCT-Folly (= 2022.05.16.00)
@@ -2261,6 +2266,7 @@ DEPENDENCIES:
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBFirestore (from `../node_modules/@react-native-firebase/firestore`)"
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
+  - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -2413,6 +2419,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/firestore"
   RNImageCropPicker:
     :path: "../node_modules/react-native-image-crop-picker"
+  RNReanimated:
+    :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   Yoga:
@@ -2500,6 +2508,7 @@ SPEC CHECKSUMS:
   RNFBApp: 91311b27bc9a33e23b76a62825afd1635501018a
   RNFBFirestore: 58f9f2f1d61eadcf16bf6d75737d92ad651bb264
   RNImageCropPicker: e7ab6fb43d2fc3e84651e786ef4a080d63b0ed3d
+  RNReanimated: e61bf5cf7ef66105114b759887378ba15484c4e5
   RNScreens: a4d9ce8f68f833f4e42410140eafd88e38bba163
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   TOCropViewController: b9b2905938c0424f289ea2d9964993044913fac6

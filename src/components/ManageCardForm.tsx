@@ -35,9 +35,13 @@ export const ManageCardForm = ({ state, setState, mode }: Props) => {
   };
 
   const onChangeTitle = (title: string) => {
-    setState({ ...state, title });
+    const titleTrim = title.split('	 ');
+    setState({
+      ...state,
+      title: titleTrim[0].trim(),
+      description: titleTrim[1].trim(),
+    });
   };
-
   const onChangeDescription = (description: string) => {
     setState({ ...state, description });
   };
