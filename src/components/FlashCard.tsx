@@ -12,6 +12,8 @@ import Animated, {
 import { useEffect } from 'react';
 import useLoading from '../hooks/useLoading';
 
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+
 const colors = ['#BED7DC', '#FFB996', '#F6F7C4', '#756AB6', '#F3EEEA'];
 
 type Props = {
@@ -41,6 +43,28 @@ export default function FlashCard({
   const scale = useSharedValue(2);
   const opacity = useSharedValue(0);
   const { loading } = useLoading();
+
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+
+  const pan = Gesture.Pan()
+    .onUpdate((e) => {
+      translateX.value = e.translationX;
+      translateY.value = e.translationY;
+    })
+    .onEnd((e) => {
+      translateX.value = withSpring(0);
+      translateY.value = withSpring(0);
+    });
+
+  const containerStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: translateX.value },
+      {
+        translateY: translateY.value,
+      },
+    ],
+  }));
 
   const animatedStyle = useAnimatedStyle(() => {
     const spinVal = interpolate(flip.value, [0, 1], [0, 180]);
@@ -84,180 +108,188 @@ export default function FlashCard({
   }, [loading]);
 
   return (
-    <Flex flex={1}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Flex
-          padding={20}
-          justify="center"
-          style={{
-            height: maxHeight,
-          }}
-        >
-          <Animated.View
-            style={[
-              animatedStyle,
-              {
-                position: 'absolute',
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0,
-
-                backfaceVisibility: 'hidden',
-              },
-            ]}
+    <GestureDetector gesture={pan}>
+      <Animated.View style={[{ flex: 1, zIndex: 20 }, containerStyle]}>
+        <Flex flex={1}>
+          <Flex
+            padding={20}
+            justify="center"
+            style={{
+              height: maxHeight,
+            }}
           >
-            <Flex
-              flex={1}
-              gap={10}
-              style={{
-                borderRadius: 10,
-                backgroundColor: colors[selectedCard?.repeatLevel ?? 0],
-                marginHorizontal: 25,
-                padding: 20,
+            <Animated.View
+              style={[
+                animatedStyle,
+                {
+                  position: 'absolute',
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
 
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.4,
-                shadowRadius: 2,
-              }}
+                  backfaceVisibility: 'hidden',
+                },
+              ]}
             >
-              <Flex align="center" direction="row" justify="space-between">
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    fontSize: 14,
-                    color: '#555',
-                  }}
-                >
-                  #{id}
-                </Text>
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                    color: '#555',
-                    position: 'absolute',
-                    left: 0,
-                    right: 0,
-                  }}
-                >
-                  {'Title'}
-                </Text>
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    fontSize: 14,
-                    color: '#555',
-                  }}
-                >
-                  {repeatLevel !== undefined ? repeatLevel + 1 : ''}
-                </Text>
-              </Flex>
-              <Flex flex={1} justify="center" align="center">
-                <Text
-                  style={{
-                    fontSize: 30,
-                    textAlign: 'center',
-                    fontWeight: 'bold',
-                    textTransform: 'capitalize',
-                  }}
-                >
-                  {title}
-                </Text>
-              </Flex>
-            </Flex>
-          </Animated.View>
-          <Animated.View
-            style={[
-              backAnimatedStyle,
-              {
-                position: 'absolute',
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0,
+              <Flex
+                flex={1}
+                gap={10}
+                style={{
+                  borderRadius: 10,
+                  backgroundColor: colors[selectedCard?.repeatLevel ?? 0],
+                  marginHorizontal: 25,
+                  padding: 20,
 
-                backfaceVisibility: 'hidden',
-              },
-            ]}
-          >
-            <Flex
-              flex={1}
-              gap={10}
-              style={{
-                borderRadius: 10,
-                backgroundColor: 'white',
-                marginHorizontal: 25,
-                padding: 20,
-
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.4,
-                shadowRadius: 2,
-              }}
-            >
-              <Flex align="center" direction="row" justify="space-between">
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    fontSize: 14,
-                    color: '#555',
-                  }}
-                >
-                  #{id}
-                </Text>
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                    color: '#555',
-                    position: 'absolute',
-                    left: 0,
-                    right: 0,
-                  }}
-                >
-                  {'Description'}
-                </Text>
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    fontSize: 14,
-                    color: '#555',
-                  }}
-                >
-                  {repeatLevel !== undefined ? repeatLevel + 1 : ''}
-                </Text>
-              </Flex>
-              <Flex flex={1} justify="center">
-                {type === 'word' && (
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.4,
+                  shadowRadius: 2,
+                }}
+              >
+                <Flex align="center" direction="row" justify="space-between">
                   <Text
                     style={{
                       textAlign: 'center',
+                      fontSize: 14,
+                      color: '#555',
                     }}
                   >
-                    {description}
+                    #{id}
                   </Text>
-                )}
-                {type === 'image' && (
-                  <Flex flex={1}>
-                    <Image
-                      source={{ uri: image }}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        resizeMode: 'contain',
-                      }}
-                    />
-                  </Flex>
-                )}
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      color: '#555',
+                      position: 'absolute',
+                      left: 0,
+                      right: 0,
+                    }}
+                  >
+                    {'Title'}
+                  </Text>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      fontSize: 14,
+                      color: '#555',
+                    }}
+                  >
+                    {repeatLevel !== undefined ? repeatLevel + 1 : ''}
+                  </Text>
+                </Flex>
+                <Flex flex={1} justify="center" align="center">
+                  <Text
+                    style={{
+                      fontSize: 30,
+                      textAlign: 'center',
+                      fontWeight: 'bold',
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {title}
+                  </Text>
+                </Flex>
               </Flex>
-            </Flex>
-          </Animated.View>
+            </Animated.View>
+            <Animated.View
+              style={[
+                backAnimatedStyle,
+                {
+                  position: 'absolute',
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+
+                  backfaceVisibility: 'hidden',
+                },
+              ]}
+            >
+              <Flex
+                flex={1}
+                gap={10}
+                style={{
+                  borderRadius: 10,
+                  backgroundColor: 'white',
+                  marginHorizontal: 25,
+                  padding: 20,
+
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.4,
+                  shadowRadius: 2,
+                }}
+              >
+                <Flex align="center" direction="row" justify="space-between">
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      fontSize: 14,
+                      color: '#555',
+                    }}
+                  >
+                    #{id}
+                  </Text>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      color: '#555',
+                      position: 'absolute',
+                      left: 0,
+                      right: 0,
+                    }}
+                  >
+                    {'Description'}
+                  </Text>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      fontSize: 14,
+                      color: '#555',
+                    }}
+                  >
+                    {repeatLevel !== undefined ? repeatLevel + 1 : ''}
+                  </Text>
+                </Flex>
+                <Flex
+                  flex={1}
+                  justify="center"
+                  style={{
+                    height: maxHeight - 80,
+                  }}
+                >
+                  {type === 'word' && (
+                    <Text
+                      style={{
+                        textAlign: 'center',
+                      }}
+                    >
+                      {description}
+                    </Text>
+                  )}
+                  {type === 'image' && (
+                    <Flex flex={1}>
+                      <Image
+                        source={{ uri: image }}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </Flex>
+                  )}
+                </Flex>
+              </Flex>
+            </Animated.View>
+          </Flex>
         </Flex>
-      </ScrollView>
-    </Flex>
+      </Animated.View>
+    </GestureDetector>
   );
 }
