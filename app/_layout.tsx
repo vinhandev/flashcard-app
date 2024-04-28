@@ -5,6 +5,10 @@ import useLoading from '../src/hooks/useLoading';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+if (__DEV__) {
+  require("../ReactotronConfig");
+}
+
 const App = () => {
   const { loading } = useLoading();
   return (

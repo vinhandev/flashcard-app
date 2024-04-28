@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  View,
 } from 'react-native';
 import { Button, Flex } from '../components';
 import useZutand from '../store';
@@ -16,6 +17,7 @@ import { showError } from '../utils';
 import useLoading from '../hooks/useLoading';
 import { useSupabase } from '../hooks/useSupabase';
 import FlashCard from '../components/FlashCard';
+import { CartesianChart, Line } from 'victory-native';
 
 export default function HomeScreen() {
   const cards = useZutand((state) => state.cards);
