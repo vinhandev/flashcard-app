@@ -41,7 +41,6 @@ export default function HomeScreen() {
       setLoading(true);
       try {
         const response = await getAll();
-
         setCards(response);
       } catch (error) {
         showError(error);
